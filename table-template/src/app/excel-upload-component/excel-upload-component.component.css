@@ -1,0 +1,86 @@
+.excel-display {
+    font-family: Arial;
+    font-size: 14px;
+    /* margin-bottom: 2rem; */
+  }
+  
+  table {
+    border-collapse: collapse;
+    width: fit-content;
+    margin-top: 20px;
+  }
+
+  
+  td {
+    border: 1px solid #ddd;
+    padding: 8px;
+    text-align: left;
+    font-family:Arial, Helvetica, sans-serif;
+  }
+  
+  tr:nth-child(even) {
+    background-color: #f2f2f2;
+  }
+  tr:nth-child(odd) {
+    background-color: #ffffff;
+  }
+  
+  input[type="file"] {
+    margin-bottom: 20px;
+  }
+  
+  input[type="text"] {
+    width: 100%;
+    border: none;
+    background: transparent;
+    font-family: inherit;
+    font-size: inherit;
+  }
+
+  
+  input[type="text"]:focus {
+    outline: 2px solid rgba(63, 220, 157, 0.455);
+  }
+
+  .file-drop-zone {
+    border: 2px dashed #cccccc;
+    padding: 40px;
+    border-radius: 8px;
+    background-color: #f9f9f9;
+    text-align: center;
+    position: relative;
+    transition: background-color 0.3s ease, border-color 0.3s ease;
+    cursor: pointer;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin: 0 auto;
+  }
+  
+  .file-drop-zone.dragover {
+    background-color: #eaf3ff;
+    border-color: #00ffd9;
+  }
+  
+  .file-input {
+    display: none; /* Hide the default file input */
+  }
+  
+  .drop-zone-label {
+    font-size: 16px;
+    color: #555;
+    pointer-events: none; /* Allows the label text to be clicked */
+  }
+  
+  .drop-zone-label p {
+    margin: 0;
+    display: flex;
+  }
+  
+  .file-drop-zone:hover {
+    background-color: #bffff1;
+    border-color: #00ffb7;
+  }
+
+  
+  

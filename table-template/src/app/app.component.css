@@ -1,0 +1,117 @@
+/* Styles for the main container */
+.container {
+    max-width: 400px; /* Limit width for better appearance */
+    margin: 50px auto; /* Center the container */
+    padding: 20px; /* Add some padding */
+    border-radius: 10px; /* Rounded corners */
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); /* Soft shadow */
+    background-color: #fff; /* White background */
+    margin-top: 1rem;
+}
+
+/* Common styles for headings */
+h2 {
+    text-align: center;
+    color: #333; /* Darker text for contrast */
+    margin-bottom: 20px; /* Space below heading */
+}
+
+.button1 {
+    position: absolute;
+    top: 0.3rem;
+    right: 10px;
+    height: 35px;
+    transition: border-color 0.3s ease, box-shadow 0.3s ease, transform 0.1s ease;
+    box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.334);
+    width: 110px;
+    border-radius: 8px;
+    background: rgb(239, 38, 38);
+    color: rgb(255, 255, 255);
+    border-width: 0px;
+    font-weight: 600;
+    transform: scale(1);
+    font-size: 12px;
+}
+
+/* Styles for input fields */
+input[type="email"],
+input[type="password"],
+input[type="text"],
+select {
+    width: 95%; /* Full width */
+    padding: 10px; /* Add padding */
+    margin: 10px 0; /* Space around inputs */
+    border: 1px solid #ccc; /* Light border */
+    border-radius: 5px; /* Slightly rounded corners */
+    font-size: 16px; /* Increase font size */
+    transition: border-color 0.3s ease, box-shadow 0.3s ease; /* Transition for focus */
+    background: transparent; /* Transparent background for floating labels */
+}
+
+/* Floating label container */
+.input-container {
+    position: relative;
+    margin-bottom: 1.5rem;
+}
+
+/* Position labels inside the input container */
+.input-container label {
+    position: absolute;
+    top: 10px;
+    left: 15px;
+    font-size: 16px;
+    color: #aaa;
+    transition: all 0.2s ease;
+    pointer-events: none;
+}
+
+/* Floating effect when input is focused or contains a value */
+.input-container input:focus + label,
+.input-container input:not(:placeholder-shown) + label,
+.input-container select:focus + label,
+.input-container select:valid + label {
+    top: -15px;
+    left: 10px;
+    font-size: 12px;
+    color: #1fd784; /* Green color when focused or filled */
+}
+
+/* Change border color on focus */
+input:focus,
+select:focus {
+    border-color: #1fd784; /* Green border on focus */
+    box-shadow: 0 0 5px rgba(0, 255, 195, 0.5); /* Light green shadow */
+}
+
+/* Styles for buttons */
+button {
+    width: 100%; /* Full width for buttons */
+    padding: 10px; /* Add padding */
+    margin-top: 10px; /* Space above buttons */
+    border: none; /* Remove default border */
+    border-radius: 5px; /* Slightly rounded corners */
+    background-color: #00d289; /* Green background */
+    color: #fff; /* White text */
+    font-size: 16px; /* Increase font size */
+    font-weight: 500;
+    cursor: pointer; /* Pointer on hover */
+    transition: background-color 0.3s ease; /* Transition for hover effect */
+}
+
+/* Change background color on hover */
+button:hover {
+    background-color: #3bd8be; /* Lighter green on hover */
+}
+
+/* Additional styles for the toggle button */
+.toggle-button {
+    background-color: transparent; /* No background */
+    border: none; /* No border */
+    color: #00d289; /* Green text */
+    cursor: pointer; /* Pointer on hover */
+}
+
+/* Toggle button hover effect */
+.toggle-button:hover {
+    color: #ffffff; /* White on hover */
+}

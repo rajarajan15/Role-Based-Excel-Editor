@@ -1,0 +1,51 @@
+<app-toolbar></app-toolbar>
+<app-excel-upload-component *ngIf="!showcomponent && !showcomponent1"></app-excel-upload-component>
+<button class="button1" *ngIf="success" (click)="logout()">LOG OUT</button>
+
+<div *ngIf="!success && showcomponent" class="container">
+    <h2>Login</h2>
+    <form (ngSubmit)="onLogin()">
+        <div class="input-container">
+            <input [(ngModel)]="email" name="email" type="email" required>
+            <label>Email</label>
+        </div>
+        <div class="input-container">
+            <input [(ngModel)]="password" name="password" type="password" required>
+            <label>Password</label>
+        </div>
+        <button type="submit">Login</button>
+    </form>
+    <p style="margin-top: 1rem;">Do not have an account?</p>
+    <button class="toggle-button" (click)="tosignup()">Sign Up</button>
+</div>
+
+<div *ngIf="showcomponent1" class="container">
+    <h2>Sign Up</h2>
+    <form (ngSubmit)="onSignup()">
+        <div class="input-container">
+            <input [(ngModel)]="name" name="name" type="text" required>
+            <label>Name</label>
+        </div>
+        <div class="input-container">
+            <input [(ngModel)]="username" name="username" type="text" required>
+            <label>Username</label>
+        </div>
+        <div class="input-container">
+            <input [(ngModel)]="email" name="email" type="email" required>
+            <label>Email</label>
+        </div>
+        <div class="input-container">
+            <input [(ngModel)]="password" name="password" type="password" required>
+            <label>Password</label>
+        </div>
+        <div class="input-container">
+            <select [(ngModel)]="role" name="role" required>
+                <!-- <option value="" disabled>Select a role</option> -->
+                <option *ngFor="let user of users" [value]="user.name">{{ user.name }}</option>
+            </select>
+            <label>Role</label>
+        </div>
+        <button style="margin-top: -1rem;" class="toggle-button" (click)="tologin()">Login</button>
+        <button type="submit">Sign Up</button>
+    </form>
+</div>
