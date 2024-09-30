@@ -1,7 +1,8 @@
 import { CommonModule } from '@angular/common';
 import { HttpClient } from '@angular/common/http';
 import { Component, OnInit } from '@angular/core';
-import { FormsModule } from '@angular/forms';
+import { saveAs } from 'file-saver';
+import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { MatSnackBar, MatSnackBarModule } from '@angular/material/snack-bar';
 import { MatToolbarModule } from '@angular/material/toolbar';
 import * as ExcelJS from 'exceljs';
@@ -9,7 +10,8 @@ import * as XLSX from 'xlsx';
 import { ToolbarComponent } from '../toolbar/toolbar.component';
 import { MatIconModule } from '@angular/material/icon'
 import { UserService } from '../user.service';
-import { TableService } from '../table.service';
+import {MatSelectModule} from '@angular/material/select';
+import {MatFormFieldModule} from '@angular/material/form-field';
 
 interface CellData {
   value: string;
@@ -28,18 +30,17 @@ interface SheetData {
   id?: string; // For database reference
 }
 
-interface Role{
-  name: string;
-}
+
 
 @Component({
   selector: 'app-excel-upload-component',
   standalone: true,
-  imports: [FormsModule, CommonModule, MatSnackBarModule, MatToolbarModule, ToolbarComponent, MatIconModule],
-  providers:[UserService, TableService],
+  imports: [FormsModule, CommonModule, MatSnackBarModule, ReactiveFormsModule, MatToolbarModule, ToolbarComponent, MatIconModule, MatSelectModule, MatFormFieldModule],
+  providers:[UserService],
   templateUrl: './excel-upload-component.component.html',
   styleUrls: ['./excel-upload-component.component.css']
 })
+
 export class ExcelUploadComponentComponent implements OnInit {
   excelData: CellData[][] = [];
   sheetData!: SheetData;
@@ -49,14 +50,9 @@ export class ExcelUploadComponentComponent implements OnInit {
   savedforms: any[] = [];
   save: boolean = false;
   isAdmin: boolean = false;
-  roles: Role[] = [
-    {name: 'supervisor'},
-    {name: 'operator'},
-    {name: 'inspector'},
-    {name: 'admin'}
-];
-  
-  constructor(private http: HttpClient, private snackBar: MatSnackBar, private userService: UserService, private tableService: TableService) {}
+  roles: string[] = ['supervisor', 'inspector', 'operator', 'admin'];
+
+  constructor(private http: HttpClient, private snackBar: MatSnackBar, private userService: UserService) {}
 
   ngOnInit() {
     this.initializeSheetData();
@@ -78,19 +74,19 @@ export class ExcelUploadComponentComponent implements OnInit {
 
   onFileChange(event: any) {
     const target: DataTransfer = (event.target);
-    
+
     if (target.files.length !== 1) {
       alert('Please upload only one file.');
       throw new Error('Cannot use multiple files');
     }
-  
+
     const file = target.files[0];
-    
+
     // Check if the uploaded file is an Excel file by its extension or MIME type
     const fileName = file.name;
     const fileExtension = fileName.split('.').pop() || ''; // Provide a default empty string
     const validExtensions = ['xlsx', 'xls'];
-  
+
     if (!validExtensions.includes(fileExtension)) {
       alert('Invalid file type. Please upload an Excel file (.xlsx or .xls).');
       return;  // Stop the function if the file type is invalid
@@ -170,6 +166,7 @@ export class ExcelUploadComponentComponent implements OnInit {
       }
     }
   }
+  
 
   prepareSheetData() {
     // Prompt the user for a sheet name
@@ -230,7 +227,6 @@ export class ExcelUploadComponentComponent implements OnInit {
       }
     );
   }
-  
 
   loadSavedfiles() {
     this.http.get<any[]>('http://localhost:5000/api/sheets').subscribe(
@@ -309,7 +305,7 @@ export class ExcelUploadComponentComponent implements OnInit {
           const roleNameExists = cellNote.includes(this.rolename); // Check if the note contains the role name
           cell.isEditable = roleNameExists; // Set editable based on the note
         });
-  
+
         this.rebuildExcelData();
       },
       (error) => {
@@ -386,24 +382,10 @@ export class ExcelUploadComponentComponent implements OnInit {
     if (newNote !== null) {
       // Update the note in the table data
       cell.note = newNote;
-
-      // If you want to save the changes, make an API call to save the updated data
-      this.saveCellNote(cell);
     }
   }
 
-  // Save the updated cell note (if you're using a backend API to persist changes)
-  saveCellNote(cell: any) {
-    this.tableService.updateCellNote(cell).subscribe(
-      (response) => {
-        console.log('Cell note updated successfully');
-      },
-      (error) => {
-        console.error('Error updating cell note:', error);
-      }
-    );
-  }
-
+//Drag and drop file
   onDragOver(event: DragEvent) {
     event.preventDefault(); // Prevent default to allow drop
     const dropZone = event.currentTarget as HTMLElement;
@@ -432,7 +414,7 @@ export class ExcelUploadComponentComponent implements OnInit {
     const fileInput = document.getElementById('fileInput') as HTMLElement;
     fileInput.click();
   }
-
+//Success Messages
   showSuccessMessage() {
     this.snackBar.open('Sheet Saved successfully!','close', {
       duration: 3000,  // Duration in milliseconds
@@ -454,6 +436,55 @@ export class ExcelUploadComponentComponent implements OnInit {
       duration: 3000,  // Duration in milliseconds
       verticalPosition: 'top',
       panelClass: ['success-snackbar']  // Optional: custom CSS class
+    });
+  }
+
+  downloadExcel() {
+    const workbook = new ExcelJS.Workbook();
+    const worksheet = workbook.addWorksheet('Displayed Data');
+
+    // Assuming that `excelData` contains the displayed table data
+    this.excelData.forEach((row, rowIndex) => {
+      // Ensure that the row and cells are defined
+      if (!row || row.length === 0) {
+        return; // Skip empty or invalid rows
+      }
+
+      const excelRow = worksheet.addRow(row.map(cell => cell?.value ?? '')); // Use nullish coalescing to avoid null/undefined
+
+      row.forEach((cell, colIndex) => {
+        if (!cell) {
+          return; // Skip undefined or invalid cells
+        }
+
+        const excelCell = excelRow.getCell(colIndex + 1);
+
+        // Apply bold formatting if specified
+        if (cell.isBold) {
+          excelCell.font = { bold: true };
+        }
+
+        // Merge cells if needed
+        if (cell.rowspan > 1 || cell.colspan > 1) {
+          worksheet.mergeCells(
+            rowIndex + 1,
+            colIndex + 1,
+            rowIndex + cell.rowspan,
+            colIndex + cell.colspan
+          );
+        }
+
+        // Apply notes as comments (optional)
+        if (cell.note) {
+          excelCell.note = cell.note;
+        }
+      });
+    });
+
+    // Generate the Excel file and trigger the download
+    workbook.xlsx.writeBuffer().then((buffer) => {
+      const blob = new Blob([buffer], { type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet' });
+      saveAs(blob, 'table_data.xlsx'); // Download the file
     });
   }
 }

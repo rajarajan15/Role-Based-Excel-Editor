@@ -79,12 +79,19 @@ export class AppComponent {
   }
 
   logout(){
+    this.email='';
+    this.password='';
     this.showcomponent=true;
     this.showcomponent1=false;
     this.success=false;
   }
 
   tosignup(){
+    this.name='';
+    this.email='';
+    this.password='';
+    this.username='';
+    this.role='';
     this.showcomponent=false;
     this.showcomponent1=true;
   }

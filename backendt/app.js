@@ -79,6 +79,15 @@ app.get('/api/get-sheet/:id', async (req, res) => {
   }
 });
 
+app.delete('/api/delete/:id',async(req,res)=>{
+  try{
+    const removedDoc = await Sheet.findByIdAndDelete(req.params.id);
+    res.json(removedDoc);
+  }catch(err){
+    res.status(200).json({error: 'Error removing sheet', err});
+  }
+})
+
 const port = 5000;
 app.listen(port, () => {
   console.log(`Server running on port ${port}`);

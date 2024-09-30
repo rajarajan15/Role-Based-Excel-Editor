@@ -9,7 +9,7 @@
         (dragleave)="onDragLeave($event)"
         (drop)="onDrop($event)"
         (click)="triggerFileInput()"
-        *ngIf="sheetData.name==''"
+        *ngIf="sheetData.name=='' && isAdmin"
         style="margin-top: 1rem;"
         >
       <!-- Hidden file input -->
@@ -42,6 +42,7 @@
       <option style="color: black;" *ngFor="let form of savedforms" [value]="form._id" >{{form.name}}</option>
     </select>
     <button style="height: 35px; transition: border-color 0.3s ease, box-shadow 0.3s ease, transform 0.1s ease; box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.334); width: 110px; border-radius: 8px; background: rgb(38, 159, 239); color: rgb(255, 255, 255); border-width: 0px; font-weight: 600; margin-right: 1rem; transform: scale(1);" (click)="loadFromDatabase(loadSheetId)" onmousedown="this.style.transform='scale(0.95)'" onmouseup="this.style.transform='scale(1)'">LOAD</button>
+    <button *ngIf="isAdmin && excelData.length" style="height: 35px; transition: border-color 0.3s ease, box-shadow 0.3s ease, transform 0.1s ease; box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.334); width: 110px; border-radius: 8px; background: rgb(82, 48, 218); color: rgb(255, 255, 255); border-width: 0px; font-weight: 600; margin-right: 1rem; transform: scale(1);" (click)="downloadExcel()" onmousedown="this.style.transform='scale(0.95)'" onmouseup="this.style.transform='scale(1)'">DOWNLOAD</button>
     </div>
   </div>
   <table *ngIf="excelData.length" style="margin-left: 1rem; margin-bottom: 2rem;margin-right: 1rem;">
