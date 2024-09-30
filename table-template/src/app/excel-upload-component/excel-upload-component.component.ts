@@ -213,7 +213,7 @@ export class ExcelUploadComponentComponent implements OnInit {
     this.sheetData.cells.forEach(cell => {
       cell.isEditable = false; // Set editable to false
     });
-    this.http.post('http://localhost:5000/api/save-sheet', this.sheetData).subscribe(
+    this.http.post('http://localhost:3000/api/save-sheet', this.sheetData).subscribe(
       (response: any) => {
         console.log('Sheet saved successfully', response);
         this.showSuccessMessage();
@@ -229,7 +229,7 @@ export class ExcelUploadComponentComponent implements OnInit {
   }
 
   loadSavedfiles() {
-    this.http.get<any[]>('http://localhost:5000/api/sheets').subscribe(
+    this.http.get<any[]>('http://localhost:3000/api/sheets').subscribe(
       forms => {
         this.savedforms = forms;
       },
@@ -243,7 +243,7 @@ export class ExcelUploadComponentComponent implements OnInit {
       cell.isEditable = false; // Set editable to false
     });
 
-    this.http.patch(`http://localhost:5000/api/update-sheet/${this.loadSheetId}`, this.sheetData).subscribe(
+    this.http.patch(`http://localhost:3000/api/update-sheet/${this.loadSheetId}`, this.sheetData).subscribe(
       (response) => {
         this.showSuccessMessage1();
         this.loadFromDatabase(this.loadSheetId);
@@ -286,7 +286,7 @@ export class ExcelUploadComponentComponent implements OnInit {
   }
 
   loadFromDatabase(id: string) {
-    this.http.get<SheetData>(`http://localhost:5000/api/get-sheet/${id}`).subscribe(
+    this.http.get<SheetData>(`http://localhost:3000/api/get-sheet/${id}`).subscribe(
       (response) => {
         this.showSuccessMessage2();
         console.log('Raw response:', response); // Check raw response
