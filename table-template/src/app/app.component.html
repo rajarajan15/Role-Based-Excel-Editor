@@ -1,51 +1,76 @@
-<app-toolbar></app-toolbar>
-<app-excel-upload-component *ngIf="!showcomponent && !showcomponent1"></app-excel-upload-component>
-<button class="button1" *ngIf="success" (click)="logout()">LOG OUT</button>
 
-<div *ngIf="!success && showcomponent" class="container">
-    <h2>Login</h2>
-    <form (ngSubmit)="onLogin()">
-        <div class="input-container">
-            <input [(ngModel)]="email" name="email" type="email" required>
-            <label>Email</label>
-        </div>
-        <div class="input-container">
-            <input [(ngModel)]="password" name="password" type="password" required>
-            <label>Password</label>
-        </div>
-        <button type="submit">Login</button>
-    </form>
-    <p style="margin-top: 1rem;">Do not have an account?</p>
-    <button class="toggle-button" (click)="tosignup()">Sign Up</button>
-</div>
+<app-toolbar *ngIf="success"></app-toolbar>
+<app-excel-upload-component *ngIf="!showcomponent"></app-excel-upload-component>
 
-<div *ngIf="showcomponent1" class="container">
-    <h2>Sign Up</h2>
-    <form (ngSubmit)="onSignup()">
-        <div class="input-container">
-            <input [(ngModel)]="name" name="name" type="text" required>
-            <label>Name</label>
+    <button class="user-button" *ngIf="success" mat-mini-fab (click)="toggleDropdown()"><mat-icon>person</mat-icon></button>
+    <div *ngIf="isDropdownVisible" class="profile-dropdown">
+        <div class="profile-header">
+          <img src="user.png" alt="User Image" class="profile-image">
+          <div class="profile-info">
+            <p class="profile-name">{{ name }}</p>
+            <p class="profile-id">{{ id | slice:-5 }}</p>  <!-- Displays last 5 characters -->
+          </div>
         </div>
-        <div class="input-container">
-            <input [(ngModel)]="username" name="username" type="text" required>
-            <label>Username</label>
+        <p class="profile-role"><strong>Role:</strong> {{ role }}</p>
+        <button (click)="logout()" class="logout-button">LOG OUT</button>
+        <button (click)="close()" class="close-button">CANCEL</button>
+    </div>
+
+<div class="auth-container" *ngIf="!success">
+    <div class="auth-form">
+        <h1><img class="logo" src="wim.png" alt="Preview Image"></h1>
+        <div *ngIf="showcomponent">
+            <form (ngSubmit)="onLogin()">
+                <div class="input-container">
+                    <input [(ngModel)]="email" name="email" type="email" required>
+                    <label>Email</label>
+                </div>
+                <div class="input-container">
+                    <input [(ngModel)]="password" name="password" type="password" required>
+                    <label>Password</label>
+                </div>
+                <button type="submit">Login</button>
+            </form>
+            <!-- <button class="toggle-button" (click)="tosignup()">Sign Up</button> -->
         </div>
-        <div class="input-container">
-            <input [(ngModel)]="email" name="email" type="email" required>
-            <label>Email</label>
+        
+        <div *ngIf="showcomponent1">
+            <form (ngSubmit)="onSignup()">
+                <div class="input-container">
+                    <input [(ngModel)]="name" name="name" type="text" required>
+                    <label>Name</label>
+                </div>
+                <div class="input-container">
+                    <input [(ngModel)]="username" name="username" type="text" required>
+                    <label>Username</label>
+                </div>
+                <div class="input-container">
+                    <input [(ngModel)]="email" name="email" type="email" required>
+                    <label>Email</label>
+                </div>
+                <div class="input-container">
+                    <input [(ngModel)]="password" name="password" type="password" required>
+                    <label>Password</label>
+                </div>
+                <div class="input-container">
+                    <select [(ngModel)]="role" name="role" required>
+                        <option *ngFor="let user of users" [value]="user.name">{{ user.name }}</option>
+                    </select>
+                    <label>Role</label>
+                </div>
+                <div class="input-container" *ngIf="role=='operator'">
+                    <select [(ngModel)]="machinename" name="machinename" required>
+                        <option *ngFor="let machine of machines" [value]="machine.name">{{ machine.name }}</option>
+                    </select>
+                    <label>Machine</label>
+                </div>
+                <button class="toggle-button" (click)="tologin()">Login</button>
+                <button type="submit">Sign Up</button>
+            </form>
         </div>
-        <div class="input-container">
-            <input [(ngModel)]="password" name="password" type="password" required>
-            <label>Password</label>
-        </div>
-        <div class="input-container">
-            <select [(ngModel)]="role" name="role" required>
-                <!-- <option value="" disabled>Select a role</option> -->
-                <option *ngFor="let user of users" [value]="user.name">{{ user.name }}</option>
-            </select>
-            <label>Role</label>
-        </div>
-        <button style="margin-top: -1rem;" class="toggle-button" (click)="tologin()">Login</button>
-        <button type="submit">Sign Up</button>
-    </form>
+    </div>
+   
+    <div class="auth-image">
+        <img src="3094352.jpg" alt="Preview Image">
+    </div>
 </div>

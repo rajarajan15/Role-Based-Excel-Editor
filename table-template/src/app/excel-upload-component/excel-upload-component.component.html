@@ -3,6 +3,51 @@
     <div style="padding: 20px;">
       <h2 *ngIf="rolename" style="font-weight: 500; text-transform: capitalize; letter-spacing: 2px; margin-top: 1rem; margin-bottom: -1rem;">User - {{name}}</h2>
       <h3 *ngIf="rolename" style="font-weight: 500; text-transform: capitalize; letter-spacing: 2px; margin-top: 1rem; margin-bottom: -1rem;">{{rolename}}</h3>
+      <h3 *ngIf="machineno" style="font-weight: 500; text-transform: capitalize; letter-spacing: 2px; margin-top: 1rem; margin-bottom: -1rem;">{{machineno}}</h3>
+    </div>
+    <div>
+      <select
+  style="
+    height: 35px;
+    padding: 0 10px;
+    border-radius: 8px;
+    border: 1.5px solid rgb(200, 200, 200);
+    background-color: #f9f9f9;
+    color: #333;
+    font-size: 14px;
+    margin-left: 1rem;
+    transition: border-color 0.3s ease, box-shadow 0.3s ease;
+    box-shadow: 0px 2px 5px rgba(0, 0, 0, 0.1);"
+  [(ngModel)]="machineno"
+  (change)="onMachineChange()"
+  *ngIf="savedformssize>0 && rolename!='operator'"
+>
+  <option value="">Select Machine</option>
+  <option
+    style="color: black;"
+    *ngFor="let machine of machines"
+    [value]="machine.name"
+  >
+    {{ machine.name }}
+  </option>
+</select>
+    </div>
+    <div *ngIf="isAdmin && excelData.length && savedformssize === 0">
+      <select style="
+          height: 35px;
+          padding: 0 10px;
+          border-radius: 8px;
+          border: 1.5px solid rgb(200, 200, 200);
+          background-color: #f9f9f9;
+          color: #333;
+          font-size: 14px;
+          margin-left: 1rem;
+          transition: border-color 0.3s ease, box-shadow 0.3s ease;
+          box-shadow: 0px 2px 5px rgba(0, 0, 0, 0.1);"
+      [(ngModel)]="machinename">
+          <option value="" >Select Machine</option>
+            <option style="color: black;" *ngFor="let machine of machines" [value]="machine.name" >{{machine.name}}</option>
+    </select>
     </div>
     <div class="file-drop-zone"
         (dragover)="onDragOver($event)"
@@ -21,11 +66,9 @@
     </div>
 
     <div style="display: flex; justify-content: flex-end; padding: 20px;">
-      <button style="height: 35px; transition: border-color 0.3s ease, box-shadow 0.3s ease, transform 0.1s ease; box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.334); width: 110px; border-radius: 8px; background: rgb(0, 222, 111); color: rgb(255, 255, 255); border-width: 0px; font-weight: 600; margin-right: 1rem; transform: scale(1);" *ngIf="excelData.length && save" (click)="saveToDatabase()" onmousedown="this.style.transform='scale(0.95)'" onmouseup="this.style.transform='scale(1)'">SAVE</button>
-
-      <button style="height: 35px; transition: border-color 0.3s ease, box-shadow 0.3s ease, transform 0.1s ease; box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.334); width: 110px; border-radius: 8px; background: rgb(24, 224, 201); color: rgb(255, 255, 255); border-width: 0px; font-weight: 600; margin-right: 1rem; transform: scale(1);" *ngIf="excelData.length" (click)="updateDatabase()" onmousedown="this.style.transform='scale(0.95)'" onmouseup="this.style.transform='scale(1)'">UPDATE</button>
-      
-      <button style="height: 35px; transition: border-color 0.3s ease, box-shadow 0.3s ease, transform 0.1s ease; box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.334); width: 110px; border-radius: 8px; background: rgb(239, 38, 38); color: rgb(255, 255, 255); border-width: 0px; font-weight: 600; margin-right: 1rem; transform: scale(1);" *ngIf="sheetData.name !== ''" (click)="resetSheetData()" onmousedown="this.style.transform='scale(0.95)'" onmouseup="this.style.transform='scale(1)'">CLEAR</button>
+      <button style="height: 35px; transition: border-color 0.3s ease, box-shadow 0.3s ease, transform 0.1s ease; box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.334); width: 110px; border-radius: 8px; background: rgb(0, 222, 111); color: rgb(255, 255, 255); border-width: 0px; font-weight: 600; margin-right: 1rem; transform: scale(1); cursor: pointer;" *ngIf="excelData.length && save" (click)="saveToDatabase()" onmousedown="this.style.transform='scale(0.95)'" onmouseup="this.style.transform='scale(1)'">SAVE</button>
+      <button style="height: 35px; transition: border-color 0.3s ease, box-shadow 0.3s ease, transform 0.1s ease; box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.334); width: 110px; border-radius: 8px; background: rgb(24, 224, 201); color: rgb(255, 255, 255); border-width: 0px; font-weight: 600; margin-right: 1rem; transform: scale(1); cursor: pointer;" *ngIf="excelData.length" (click)="updateDatabase()" onmousedown="this.style.transform='scale(0.95)'" onmouseup="this.style.transform='scale(1)'">UPDATE</button>
+      <button style="height: 35px; transition: border-color 0.3s ease, box-shadow 0.3s ease, transform 0.1s ease; box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.334); width: 110px; border-radius: 8px; background: rgb(239, 38, 38); color: rgb(255, 255, 255); border-width: 0px; font-weight: 600; margin-right: 1rem; transform: scale(1); cursor: pointer;" *ngIf="sheetData.name !== ''" (click)="resetSheetData()" onmousedown="this.style.transform='scale(0.95)'" onmouseup="this.style.transform='scale(1)'">CLEAR</button>
       <select style="
     height: 35px;
     padding: 0 10px;
@@ -37,30 +80,34 @@
     margin-right: 1rem;
     transition: border-color 0.3s ease, box-shadow 0.3s ease;
     box-shadow: 0px 2px 5px rgba(0, 0, 0, 0.1);"
-[(ngModel)]="loadSheetId">
+[(ngModel)]="loadSheetId" *ngIf="machineno">
     <option value="" >Select a Sheet</option>
-      <option style="color: black;" *ngFor="let form of savedforms" [value]="form._id" >{{form.name}}</option>
+      <option style="color: black;" *ngFor="let form of savedforms" [value]="form._id">{{form.name}}</option>
     </select>
-    <button style="height: 35px; transition: border-color 0.3s ease, box-shadow 0.3s ease, transform 0.1s ease; box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.334); width: 110px; border-radius: 8px; background: rgb(38, 159, 239); color: rgb(255, 255, 255); border-width: 0px; font-weight: 600; margin-right: 1rem; transform: scale(1);" (click)="loadFromDatabase(loadSheetId)" onmousedown="this.style.transform='scale(0.95)'" onmouseup="this.style.transform='scale(1)'">LOAD</button>
-    <button *ngIf="isAdmin && excelData.length" style="height: 35px; transition: border-color 0.3s ease, box-shadow 0.3s ease, transform 0.1s ease; box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.334); width: 110px; border-radius: 8px; background: rgb(82, 48, 218); color: rgb(255, 255, 255); border-width: 0px; font-weight: 600; margin-right: 1rem; transform: scale(1);" (click)="downloadExcel()" onmousedown="this.style.transform='scale(0.95)'" onmouseup="this.style.transform='scale(1)'">DOWNLOAD</button>
+    <button style="height: 35px; transition: border-color 0.3s ease, box-shadow 0.3s ease, transform 0.1s ease; box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.334); width: 110px; border-radius: 8px; background: rgb(38, 159, 239); color: rgb(255, 255, 255); border-width: 0px; font-weight: 600; margin-right: 1rem; transform: scale(1); cursor: pointer;" (click)="loadFromDatabase(loadSheetId)" onmousedown="this.style.transform='scale(0.95)'" onmouseup="this.style.transform='scale(1)'" *ngIf="machineno">LOAD</button>
+    <button *ngIf="isAdmin && excelData.length" style="height: 35px; transition: border-color 0.3s ease, box-shadow 0.3s ease, transform 0.1s ease; box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.334); width: 110px; border-radius: 8px; background: rgb(82, 48, 218); color: rgb(255, 255, 255); border-width: 0px; font-weight: 600; margin-right: 1rem; transform: scale(1); cursor: pointer;" (click)="downloadExcel()" onmousedown="this.style.transform='scale(0.95)'" onmouseup="this.style.transform='scale(1)'">DOWNLOAD</button>
     </div>
   </div>
-  <table *ngIf="excelData.length" style="margin-left: 1rem; margin-bottom: 2rem;margin-right: 1rem;">
+
+  <table *ngIf="excelData.length && machinename || excelData.length && machineno" style="margin-left: 1rem; margin-bottom: 2rem;margin-right: 1rem;">
     <tr *ngFor="let row of excelData; let rowIndex = index">
-      <ng-container *ngFor="let cell of row; let cellIndex = index" >
+      <ng-container *ngFor="let cell of row; let cellIndex = index">
         <td *ngIf="cell"
             [attr.rowspan]="cell.rowspan || 1"
-            [attr.colspan]="cell.colspan || 1" (dblclick)="editCell(cell)">
+            [attr.colspan]="cell.colspan || 1"
+            (dblclick)="toggleDropdown(cell)">
           <ng-container *ngIf="cell.isEditable; else readOnlyCell">
             <input type="text"
                    [(ngModel)]="cell.value"
-                   (blur)="updateCellValue(rowIndex, cellIndex, cell.value)" style="background: rgba(90, 211, 163, 0.455);">
+                   (blur)="updateCellValue(rowIndex, cellIndex, cell.value)"
+                   style="background: rgba(90, 211, 163, 0.455);">
           </ng-container>
           <ng-template #readOnlyCell>
             <div [ngStyle]="{'font-weight': cell.isBold ? 'bold' : 'normal'}">
               {{cell.value}}
             </div>
           </ng-template>
+          <!-- No inline dropdown, it's replaced with a dialog -->
         </td>
       </ng-container>
     </tr>

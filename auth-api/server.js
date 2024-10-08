@@ -15,7 +15,8 @@ app.use(cors());
 app.use(bodyParser.json());
 
 const SheetSchema = new mongoose.Schema({
-  name: String,
+  name: {type: String},
+  machineno: { type: String, required: true },
   cells: [{
     value: String,
     rowspan: Number,
@@ -24,7 +25,8 @@ const SheetSchema = new mongoose.Schema({
     isBold: Boolean,
     row: Number,
     col: Number,
-    note: String
+    note: String,
+    roles: [String]
   }]
 });
 
@@ -51,13 +53,14 @@ const User = mongoose.model('User', {
   username: { type: String, unique: true },
   name: { type: String },
   role: { type: String, enum: ['supervisor', 'operator', 'inspector', 'admin'], default: 'operator' },
+  machineno : { type: String },
   password: String
 });
 
 // Signup route
 app.post('/api/signup', async (req, res) => {
   try {
-    const { email, password, role, username, name } = req.body;  // Extract email and password from req.body
+    const { email, password, role, username, name, machineno } = req.body;  // Extract email and password from req.body
     if (!email || !password || !username) {
       return res.status(400).json({ error: 'Email, username, and password are required' });
     }
@@ -66,7 +69,7 @@ app.post('/api/signup', async (req, res) => {
     const hashedPassword = await bcrypt.hash(password, 10);
 
     // Create a new user
-    const user = new User({ email, username, name, role, password: hashedPassword });
+    const user = new User({ email, username, name, role, machineno, password: hashedPassword });
     await user.save();
 
     // Generate JWT token
@@ -89,7 +92,7 @@ app.post('/api/login', async (req, res) => {
       const token = jwt.sign({ userId: user._id }, JWT_SECRET, { expiresIn: '1h' });
 
       // Send token and role to the frontend
-      res.json({ token, role: user.role, name: user.name });
+      res.json({ token, role: user.role, name: user.name, id: user._id });
     } else {
       res.status(400).json({ error: 'Invalid credentials' });
     }
@@ -97,6 +100,15 @@ app.post('/api/login', async (req, res) => {
     res.status(500).json({ error: 'Error logging in' });
   }
 });
+
+app.get('/api/users', async(req,res)=>{
+  try{
+    const doc = await User.find();
+    res.send(doc);
+  }catch(err){
+    res.status(500).send({error: 'Error getting users'}, err)
+  }
+})
 
 app.post('/api/save-sheet', async (req, res) => {
   try {

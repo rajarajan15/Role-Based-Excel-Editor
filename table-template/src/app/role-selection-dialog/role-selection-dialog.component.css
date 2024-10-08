@@ -1,0 +1,52 @@
+.dialog-title {
+    font-size: 24px;
+    font-weight: 600;
+    margin-bottom: 16px;
+    text-align: center;
+  }
+  
+  .roles-container {
+    max-height: 300px; /* Set max height for scrolling */
+    overflow-y: auto; /* Enable vertical scroll */
+    padding: 0px 20px; /* Add horizontal padding */
+  }
+  
+  .role-item {
+    display: flex;
+    align-items: center; /* Center the checkbox and text */
+    margin-bottom: 12px; /* Space between items */
+  }
+  
+  input[type="checkbox"] {
+    margin-right: 10px; /* Space between checkbox and label */
+  }
+  
+  .dialog-actions {
+    display: flex;
+    justify-content: flex-end;
+    padding: 16px; /* Padding for action buttons */
+  }
+  
+  .save-button, .cancel-button {
+    background-color: #08ddaf; /* Bootstrap Primary color */
+    color: white; /* Text color */
+    border: none; /* Remove default border */
+    border-radius: 4px; /* Rounded corners */
+    padding: 10px 15px; /* Padding for buttons */
+    margin-left: 10px; /* Space between buttons */
+    cursor: pointer; /* Change cursor on hover */
+    transition: background-color 0.3s; /* Smooth transition */
+  }
+  
+  .save-button:hover {
+    background-color: #00b38c; /* Darker shade on hover */
+  }
+  
+  .cancel-button {
+    background-color: #fd1b32; /* Bootstrap Danger color */
+  }
+  
+  .cancel-button:hover {
+    background-color: #9a0f1d; /* Darker shade on hover */
+  }
+  

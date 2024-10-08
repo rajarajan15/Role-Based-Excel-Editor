@@ -1,0 +1,18 @@
+<div style="padding: 20px;">
+<h2 class="dialog-title">Select Roles</h2>
+<div class="roles-container">
+  <div class="role-item" *ngFor="let role of roles">
+    <label>
+      <input type="checkbox"
+             [checked]="selectedRoles.includes(role)"
+             (change)="onRoleChange(role, $event)" />
+      {{ role }}
+    </label>
+  </div>
+</div>
+
+<div class="dialog-actions">
+  <button class="save-button" (click)="save()">Save</button>
+  <button class="cancel-button" (click)="close()">Cancel</button>
+</div>
+</div>

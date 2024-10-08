@@ -1,17 +1,21 @@
 import { CommonModule } from '@angular/common';
 import { HttpClient } from '@angular/common/http';
 import { Component, OnInit } from '@angular/core';
-import { saveAs } from 'file-saver';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
+import { MatCheckboxModule } from '@angular/material/checkbox';
+import { MatDialog } from '@angular/material/dialog';
+import { MatFormFieldModule } from '@angular/material/form-field';
+import { MatIconModule } from '@angular/material/icon';
+import { MatSelectModule } from '@angular/material/select';
 import { MatSnackBar, MatSnackBarModule } from '@angular/material/snack-bar';
 import { MatToolbarModule } from '@angular/material/toolbar';
 import * as ExcelJS from 'exceljs';
+import { saveAs } from 'file-saver';
+import { Observable, tap } from 'rxjs';
 import * as XLSX from 'xlsx';
+import { RoleSelectionDialogComponent } from '../role-selection-dialog/role-selection-dialog.component';
 import { ToolbarComponent } from '../toolbar/toolbar.component';
-import { MatIconModule } from '@angular/material/icon'
 import { UserService } from '../user.service';
-import {MatSelectModule} from '@angular/material/select';
-import {MatFormFieldModule} from '@angular/material/form-field';
 
 interface CellData {
   value: string;
@@ -22,20 +26,42 @@ interface CellData {
   row: number;
   col: number;
   note?: string;
+  isDropdownOpen?: boolean; // Add this property
+}
+
+interface Machineno{
+  name: string;
 }
 
 interface SheetData {
   cells: CellData[];
   name: string;
+  machineno: string;
   id?: string; // For database reference
 }
 
-
+interface Username{
+  name: string;
+  role: string;
+  _id: string;
+  machineno: string;
+}
 
 @Component({
   selector: 'app-excel-upload-component',
   standalone: true,
-  imports: [FormsModule, CommonModule, MatSnackBarModule, ReactiveFormsModule, MatToolbarModule, ToolbarComponent, MatIconModule, MatSelectModule, MatFormFieldModule],
+  imports: [FormsModule,
+            CommonModule,
+            MatSnackBarModule,
+            ReactiveFormsModule,
+            MatToolbarModule,
+            ToolbarComponent,
+            MatIconModule,
+            MatSelectModule,
+            MatFormFieldModule,
+            MatCheckboxModule,
+            RoleSelectionDialogComponent
+          ],
   providers:[UserService],
   templateUrl: './excel-upload-component.component.html',
   styleUrls: ['./excel-upload-component.component.css']
@@ -48,33 +74,69 @@ export class ExcelUploadComponentComponent implements OnInit {
   rolename: string = '';
   name: string = '';
   savedforms: any[] = [];
+  savedformssize: number = 0;
   save: boolean = false;
   isAdmin: boolean = false;
-  roles: string[] = ['supervisor', 'inspector', 'operator', 'admin'];
+  userid: string = '';
+  usernames: Username[] = [];
+  roles: string[] = ['supervisor', 'operator', 'inspector'];
+  machineno: string = '';
+  machinename: string = '';
+  machines: Machineno[] = [
+    {name: 'A'},
+    {name: 'B'},
+    {name: 'C'},
+    {name: 'D'}
+];
 
-  constructor(private http: HttpClient, private snackBar: MatSnackBar, private userService: UserService) {}
+  constructor(private http: HttpClient, private snackBar: MatSnackBar, private userService: UserService, private dialog: MatDialog) {}
 
   ngOnInit() {
     this.initializeSheetData();
-    this.loadSavedfiles();
+    // this.loadSavedfiles();
+    
+    // Fetch role, name, and user ID from local storage or service
     this.rolename = localStorage.getItem('role') || this.userService.getRole();
     this.name = localStorage.getItem('name') || this.userService.getName();
+    this.userid = localStorage.getItem('id') || this.userService.getid();
     console.log(this.rolename);
-    if(this.rolename == 'admin')
-      this.isAdmin=true;
+  
+    // Check if user is admin
+    if (this.rolename == 'admin') {
+      this.isAdmin = true;
+    }
+  
+    // Load saved file size
+    this.loadSavedfilessize();
+    
+    // Fetch all users
+    this.getAllUsers().subscribe(() => {
+      // Now this block will execute only after getAllUsers has fetched the data
+      // If the user is an operator, set the machine number
+      if (this.rolename == 'operator') {
+        console.log('userid - ',this.userid);
+        for (let i = 0; i < this.usernames.length; i++) {
+          if (this.usernames[i]._id == this.userid) {
+            this.machineno = this.usernames[i].machineno;
+          }
+        }
+        this.loadSavedfiles();
+      }
+    });
   }
 
   initializeSheetData() {
     this.sheetData = {
       cells: [],
       name: '',
+      machineno:'',
       id:''
     };
   }
 
   onFileChange(event: any) {
     const target: DataTransfer = (event.target);
-
+    this.savedformssize = 0;
     if (target.files.length !== 1) {
       alert('Please upload only one file.');
       throw new Error('Cannot use multiple files');
@@ -109,7 +171,7 @@ export class ExcelUploadComponentComponent implements OnInit {
       this.processSheet(wsXlsx, wsExcelJS, merges);
       this.prepareSheetData();
     };
-  
+
     reader.readAsArrayBuffer(file);
     this.save = true;
   }
@@ -152,6 +214,7 @@ export class ExcelUploadComponentComponent implements OnInit {
           row: R,
           col: C,
           note: note // Include the note
+
         };
 
         const mergeData = this.findMergedCell(R, C, merges);
@@ -166,7 +229,6 @@ export class ExcelUploadComponentComponent implements OnInit {
       }
     }
   }
-  
 
   prepareSheetData() {
     // Prompt the user for a sheet name
@@ -174,13 +236,14 @@ export class ExcelUploadComponentComponent implements OnInit {
     
     // Fallback to a default name if the user cancels or enters nothing
     const finalSheetName = sheetName && sheetName.trim() !== '' ? sheetName : 'Sheet1';
-    
+    console.log('From prepare sheet - ',this.machinename);
     this.sheetData = {
       cells: this.excelData.flat().filter(cell => cell !== null).map(cell => ({
         ...cell,
         note: cell.note // Ensure note is included
       })) as CellData[],
-      name: finalSheetName // Use the name entered by the user,
+      name: finalSheetName, // Use the name entered by the user,
+      machineno: this.machinename
     };
   }
 
@@ -213,25 +276,55 @@ export class ExcelUploadComponentComponent implements OnInit {
     this.sheetData.cells.forEach(cell => {
       cell.isEditable = false; // Set editable to false
     });
+    this.sheetData.machineno = this.machinename;
+    console.log('From save file - ',this.machinename);
     this.http.post('http://localhost:3000/api/save-sheet', this.sheetData).subscribe(
       (response: any) => {
         console.log('Sheet saved successfully', response);
         this.showSuccessMessage();
         this.sheetData.id = response.id; // Store the database ID for future updates
-        this.loadSavedfiles();
+        // this.loadSavedfiles();
         this.save=false;
+        this.loadSavedfilessize();
       },
       (error) => {
+        console.log(this.sheetData);
         this.showLabelAlert2();
         console.error('Error saving sheet', error);
       }
     );
   }
 
+  onMachineChange() {
+    this.loadSavedfiles();  // Call the function when machine is selected
+  }
+
   loadSavedfiles() {
+    console.log('Changed machine name - ',this.machineno);
+    this.savedforms = [];
     this.http.get<any[]>('http://localhost:3000/api/sheets').subscribe(
       forms => {
-        this.savedforms = forms;
+        let k=0;
+        for(let i=0;i<forms.length;i++){
+          console.log()
+          if(forms[i].machineno == this.machineno){
+            this.savedforms[k] = forms[i];
+            k++;
+          }
+        }
+        console.log('Check - ',this.savedforms);
+      },
+      error => console.error('Error loading saved forms', error)
+    )
+  }
+
+  loadSavedfilessize() {
+    console.log('Changed machine name - ',this.machineno);
+    this.savedforms = [];
+    this.http.get<any[]>('http://localhost:3000/api/sheets').subscribe(
+      forms => {
+        this.savedformssize = forms.length;
+        console.log('Check - ',this.savedformssize);
       },
       error => console.error('Error loading saved forms', error)
     )
@@ -255,6 +348,21 @@ export class ExcelUploadComponentComponent implements OnInit {
       }
     );
   }
+
+  getAllUsers(): Observable<Username[]> {
+    return this.http.get<Username[]>('http://localhost:3000/api/users').pipe(
+      tap((response: Username[]) => {
+        console.log(response);
+        this.usernames = response.map(user => ({
+          name: user.name,
+          role: user.role,
+          _id: user._id,
+          machineno: user.machineno
+        }));
+      })
+    );
+  }
+  
 
   showLabelAlert() {
     this.snackBar.open('⚠️ Error Loading Sheet !', 'Close', {
@@ -290,7 +398,7 @@ export class ExcelUploadComponentComponent implements OnInit {
       (response) => {
         this.showSuccessMessage2();
         console.log('Raw response:', response); // Check raw response
-  
+        
         // Assuming normalizeSheetData is supposed to format the response
         this.sheetData = this.normalizeSheetData(response);
         console.log('Normalized sheet data:', this.sheetData); // Log normalized data
@@ -332,6 +440,7 @@ export class ExcelUploadComponentComponent implements OnInit {
     return {
       cells: normalizedCells,
       name: data.name || 'Sheet1',
+      machineno: this.machineno,
       id: data.id
     };
   }
@@ -375,7 +484,6 @@ export class ExcelUploadComponentComponent implements OnInit {
       this.showLabelAlert3();
       return;
     }
-
     // Prompt the admin to enter or modify a note
     const newNote = prompt('Enter a new note for this cell:', cell.note || '');
 
@@ -384,6 +492,54 @@ export class ExcelUploadComponentComponent implements OnInit {
       cell.note = newNote;
     }
   }
+
+  toggleDropdown(cell: any) {
+    if (!this.isAdmin) {
+      this.showLabelAlert3();
+      return;
+    }
+
+    const selectedRoles = cell.note ? cell.note.split(' ') : [];
+
+    const dialogRef = this.dialog.open(RoleSelectionDialogComponent, {
+      width: '250px',
+      data: {
+        roles: this.roles,
+        selectedRoles: selectedRoles
+      }
+    });
+
+    dialogRef.afterClosed().subscribe(result => {
+      if (result) {
+        cell.note = result.join(' '); // Store selected roles as a space-separated string
+      }
+    });
+  }
+
+  // Check if a role is already selected in the not
+  isRoleSelected(note: string | undefined, role: string): boolean {
+    // Ensure that 'note' is a string before splitting
+    return typeof note === 'string' && note.split(' ').includes(role);
+  }
+  
+  // Handle role selection change (checkbox)
+  onRoleSelectionChange(cell: CellData, role: string, event: any) {
+    const selectedRoles = cell.note ? cell.note.split(' ') : [];
+  
+    if (event.target.checked) {
+      // Add role if selected
+      selectedRoles.push(role);
+    } else {
+      // Remove role if deselected
+      const index = selectedRoles.indexOf(role);
+      if (index !== -1) {
+        selectedRoles.splice(index, 1);
+      }
+    }
+  
+    // Update the note as a space-separated string
+    cell.note = selectedRoles.join(' ');
+  }  
 
 //Drag and drop file
   onDragOver(event: DragEvent) {
@@ -442,7 +598,6 @@ export class ExcelUploadComponentComponent implements OnInit {
   downloadExcel() {
     const workbook = new ExcelJS.Workbook();
     const worksheet = workbook.addWorksheet('Displayed Data');
-
     // Assuming that `excelData` contains the displayed table data
     this.excelData.forEach((row, rowIndex) => {
       // Ensure that the row and cells are defined

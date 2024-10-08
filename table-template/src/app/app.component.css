@@ -1,20 +1,140 @@
-/* Styles for the main container */
-.container {
-    max-width: 400px; /* Limit width for better appearance */
-    margin: 50px auto; /* Center the container */
-    padding: 20px; /* Add some padding */
-    border-radius: 10px; /* Rounded corners */
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); /* Soft shadow */
-    background-color: #fff; /* White background */
-    margin-top: 1rem;
+/* Main container for auth section */
+.auth-container {
+    position: relative;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    width: 600px;
+    margin: 50px auto;
+    padding: 20px;
+    background: linear-gradient(135deg, #01442d, #3b9c83); /* Gradient from dark to light green */
+    border-radius: 10px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    overflow: hidden;
 }
 
-/* Common styles for headings */
-h2 {
-    text-align: center;
-    color: #333; /* Darker text for contrast */
-    margin-bottom: 20px; /* Space below heading */
+
+/* Form container */
+.auth-form {
+    flex: 1;
+    padding: 20px;
 }
+
+.auth-form h1 {
+    text-align: center;
+    color: #81ffc0;
+    margin-bottom: 20px;
+}
+
+.auth-form h2 {
+    text-align: center;
+    color: #333;
+    margin-bottom: 10px;
+}
+
+/* Preview image container */
+.auth-image {
+    flex: 1;
+    text-align: center;
+}
+
+.auth-image img {
+    max-width: 100%; /* Make sure the image fits within its container */
+    height: auto;
+    border-radius: 10px;
+}
+
+/* Styles for the login/signup forms */
+.input-container {
+    position: relative;
+    margin-bottom: 1.5rem;
+}
+
+input[type="email"],
+input[type="password"],
+input[type="text"],
+select {
+    width: 92%;
+    padding: 10px;
+    margin: 10px 0;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    font-size: 16px;
+    transition: border-color 0.3s ease, box-shadow 0.3s ease;
+    background: rgb(233, 255, 247);
+}
+
+.input-container label {
+    position: absolute;
+    top: 10px;
+    left: 15px;
+    font-size: 16px;
+    color: #aaa;
+    transition: all 0.2s ease;
+    pointer-events: none;
+}
+
+.input-container input:focus + label,
+.input-container input:not(:placeholder-shown) + label,
+.input-container select:focus + label,
+.input-container select:valid + label {
+    top: -15px;
+    left: 10px;
+    font-size: 12px;
+    color: #ffffff;
+}
+
+input:focus,
+select:focus {
+    border-color: #1fd784;
+    box-shadow: 0 0 5px rgba(0, 255, 195, 0.5);
+}
+
+.user-button{
+    position: absolute;
+    right: 10px;
+    top: 0rem;
+    transition: border-color 0.3s ease, box-shadow 0.3s ease, transform 0.1s ease;
+    background: rgb(170, 170, 11);
+    color: rgb(255, 255, 255);
+    transform: scale(1);
+    width: fit-content;
+}
+
+button {
+    width: 100%;
+    padding: 10px;
+    margin-top: 10px;
+    border: none;
+    border-radius: 5px;
+    background-color: #00d289;
+    color: #fff;
+    font-size: 16px;
+    font-weight: 500;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+}
+
+
+
+button:hover {
+    background-color: #3bd8be;
+}
+
+.toggle-button {
+    background-color: transparent;
+    border: none;
+    color: #00d289;
+    cursor: pointer;
+}
+
+.toggle-button:hover {
+    color: #fff;
+}
+
+/* Logout button */
+
+
 
 .button1 {
     position: absolute;
@@ -33,85 +153,96 @@ h2 {
     font-size: 12px;
 }
 
-/* Styles for input fields */
-input[type="email"],
-input[type="password"],
-input[type="text"],
-select {
-    width: 95%; /* Full width */
-    padding: 10px; /* Add padding */
-    margin: 10px 0; /* Space around inputs */
-    border: 1px solid #ccc; /* Light border */
-    border-radius: 5px; /* Slightly rounded corners */
-    font-size: 16px; /* Increase font size */
-    transition: border-color 0.3s ease, box-shadow 0.3s ease; /* Transition for focus */
-    background: transparent; /* Transparent background for floating labels */
+.logo{
+    width: 150px;
 }
 
-/* Floating label container */
-.input-container {
-    position: relative;
-    margin-bottom: 1.5rem;
-}
 
-/* Position labels inside the input container */
-.input-container label {
+.profile-dropdown {
+    display: block;
     position: absolute;
-    top: 10px;
-    left: 15px;
+    top: 5rem;
+    right: 10px;
+    background-color: #fff;
+    width: 250px;
+    border: 1px solid #ddd;
+    border-radius: 12px;
+    box-shadow: 0 6px 15px rgba(0, 0, 0, 0.1);
+    padding: 20px;
+    z-index: 1;
+    font-family: Arial, sans-serif;
+  }
+  
+  .profile-header {
+    display: flex;
+    align-items: center;
+    margin-bottom: 15px;
+  }
+  
+  .profile-image {
+    width: 50px;
+    height: 50px;
+    border-radius: 50%;
+    border: 2px solid #f0f0f0;
+    margin-right: 15px;
+  }
+  
+  .profile-info {
+    flex-grow: 1;
+  }
+  
+  .profile-name {
+    margin: 0;
     font-size: 16px;
-    color: #aaa;
-    transition: all 0.2s ease;
-    pointer-events: none;
-}
+    font-weight: bold;
+    color: #333;
+  }
+  
+  .profile-id {
+    margin: 0;
+    font-size: 14px;
+    color: #777;
+  }
+  
+  .profile-role {
+    font-size: 14px;
+    color: #555;
+    margin-bottom: 20px;
+    border-top: 1px solid #e0e0e0;
+    padding-top: 10px;
+  }
+  
+  .logout-button {
+    width: fit-content;
+    padding: 10px;
+    background-color: #ff4b5c;
+    color: white;
+    border: none;
+    border-radius: 8px;
+    font-size: 14px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+  }
 
-/* Floating effect when input is focused or contains a value */
-.input-container input:focus + label,
-.input-container input:not(:placeholder-shown) + label,
-.input-container select:focus + label,
-.input-container select:valid + label {
-    top: -15px;
-    left: 10px;
-    font-size: 12px;
-    color: #1fd784; /* Green color when focused or filled */
-}
+  .close-button{
+    width: fit-content;
+    padding: 10px;
+    background-color: #6e6e6e;
+    color: white;
+    border: none;
+    border-radius: 8px;
+    font-size: 14px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+    margin-left: 1rem;
+  }
 
-/* Change border color on focus */
-input:focus,
-select:focus {
-    border-color: #1fd784; /* Green border on focus */
-    box-shadow: 0 0 5px rgba(0, 255, 195, 0.5); /* Light green shadow */
-}
-
-/* Styles for buttons */
-button {
-    width: 100%; /* Full width for buttons */
-    padding: 10px; /* Add padding */
-    margin-top: 10px; /* Space above buttons */
-    border: none; /* Remove default border */
-    border-radius: 5px; /* Slightly rounded corners */
-    background-color: #00d289; /* Green background */
-    color: #fff; /* White text */
-    font-size: 16px; /* Increase font size */
-    font-weight: 500;
-    cursor: pointer; /* Pointer on hover */
-    transition: background-color 0.3s ease; /* Transition for hover effect */
-}
-
-/* Change background color on hover */
-button:hover {
-    background-color: #3bd8be; /* Lighter green on hover */
-}
-
-/* Additional styles for the toggle button */
-.toggle-button {
-    background-color: transparent; /* No background */
-    border: none; /* No border */
-    color: #00d289; /* Green text */
-    cursor: pointer; /* Pointer on hover */
-}
-
-/* Toggle button hover effect */
-.toggle-button:hover {
-    color: #ffffff; /* White on hover */
-}
+  .close-button:hover {
+    background-color: #515151;
+  }
+  
+  .logout-button:hover {
+    background-color: #ff2b3b;
+  }
+  
+  
