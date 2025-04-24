@@ -1,45 +1,84 @@
-Role-Based Excel-Editor
+# Role-Based Excel-Editor
 
-  A MEAN (MongoDB, Express, Angular, Node.js) application that allows users to upload Excel files, display their data in a table format, and manage user permissions for editing specific cells based on assigned roles. The application supports machine-based sheet organization, shift-based editing, role-based privileges, template versioning, and a dashboard view for templates.
+A powerful MEAN (MongoDB, Express, Angular, Node.js) stack application that enables Excel file uploads, data display in a table view, and fine-grained role-based access control for cell-level editing.
 
-Features
-  1.  Excel Upload and Display: Upload Excel files, which are converted to a table format and displayed in the app.
-  2.  Role-Based Access Control: Admins can assign roles to users, defining specific cells they are allowed to edit.
-  3.  Machine-Based Sheet Organization: Sheets are organized by machine, which can be created or deleted as needed.
-  4.  Shift-Based Editing: Sheets are editable only during assigned shifts for specific roles.
-  5.  Role and Privilege Management: Admins can create roles and set privileges for cell-level editing.
-  6.  Template Management and Versioning: Admins can modify templates with version control.
-  7.  Dashboard for Templates: View existing templates and their versions.
+---
 
-Usage
-  1.  Uploading Excel Files: Admin users can upload Excel files to specific machines.
-  2.  Assigning Roles and Privileges: Admins can create roles, assign privileges for cell editing, and set shifts for editing access.
-  3.  Managing Machines and Sheets: Admins can create or delete machines and remove specific sheets as needed.
-  4.  Editing Templates: Admins can edit templates and access version control for tracking changes.
-  5.  Dashboard Access: View all templates in the dashboard, categorized by machine and version.
+## Features
 
-API Documentation
+- **Excel Upload and Display**  
+  Upload Excel files which are parsed and rendered in a dynamic table format.
 
-  ->  Authentication
-      1.  POST /api/login - Login for users
-      2.  POST /api/signup - Register a new user (admin only)
-      
-  ->  Machine Management
-      1.  POST /api/machines - Create a new machine
-      2.  DELETE /api/machines/:id - Delete a specific machine
-      
-  ->  Sheet Management
-      1.  POST /api/sheets/upload - Upload an Excel sheet to a specific machine
-      2.  GET /api/sheets - Retrieve all sheets
-      3.  DELETE /api/sheets/:id - Delete a specific sheet
-      
-  ->  Role and Privilege Management
-      1.  POST /api/roles - Create a new role with privileges
-      2.  GET /api/roles - Get all roles
-      3.  PUT /api/roles/:id - Update a role’s privileges
+- **Role-Based Access Control**  
+  Admins can assign users to roles with permissions to edit specific cells.
 
-  ->  Template Management
-      1.  GET /api/templates - Get all templates with version info
-      2.  PUT /api/templates/:id - Modify a template (admin only)
-      3.  GET /api/templates/:id/versions - Get versions of a specific template
-      
+- **Machine-Based Sheet Organization**  
+  Excel sheets are categorized by machine, allowing organization and management per unit.
+
+- **Shift-Based Editing**  
+  Editing access is controlled by user shifts, ensuring changes can only be made at designated times.
+
+- **Role and Privilege Management**  
+  Create and manage roles with granular control over cell edit permissions.
+
+- **Template Management and Versioning**  
+  Modify templates with built-in version control to track historical changes.
+
+- **Template Dashboard View**  
+  Access a dashboard to browse templates by machine and version.
+
+---
+
+## Usage
+
+### Uploading Excel Files
+Admins can upload Excel files directly to machine-specific categories.
+
+### Assigning Roles and Privileges
+Roles define what each user can edit. Admins assign cell-level permissions and shift timings.
+
+### Managing Machines and Sheets
+Create or delete machines and associated sheets as required.
+
+### Editing Templates
+Templates can be modified with versioning enabled to preserve history and updates.
+
+### Dashboard Access
+Users can browse all uploaded templates, organized by machine and version.
+
+---
+
+## API Documentation
+
+### Authentication
+- `POST /api/login` – User login  
+- `POST /api/signup` – Register a new user (Admin only)
+
+### Machine Management
+- `POST /api/machines` – Create a new machine  
+- `DELETE /api/machines/:id` – Delete a specific machine
+
+### Sheet Management
+- `POST /api/sheets/upload` – Upload an Excel sheet to a specific machine  
+- `GET /api/sheets` – Retrieve all uploaded sheets  
+- `DELETE /api/sheets/:id` – Delete a specific sheet
+
+### Role & Privilege Management
+- `POST /api/roles` – Create a new role with privileges  
+- `GET /api/roles` – Retrieve all roles  
+- `PUT /api/roles/:id` – Update role privileges
+
+### Template Management
+- `GET /api/templates` – Get all templates with version info  
+- `PUT /api/templates/:id` – Modify a template (Admin only)  
+- `GET /api/templates/:id/versions` – Retrieve version history of a specific template
+
+---
+
+## Tech Stack
+
+- **Frontend**: Angular  
+- **Backend**: Node.js, Express  
+- **Database**: MongoDB  
+- **Authentication**: JWT (JSON Web Tokens)  
+- **Excel Parsing**: [`xlsx`](https://www.npmjs.com/package/xlsx) npm library
